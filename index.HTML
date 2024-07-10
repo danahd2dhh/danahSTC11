@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Management</title>
+    <style>
+        /* Reset styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            direction: ltr;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header {
+            background-color: #303f9f;
+            color: #fff;
+            padding: 15px 0;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-container {
+            max-width: 80%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .header-icon {
+            margin-right: 10px;
+        }
+
+        .header-text {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-text i {
+            margin-left: 5px;
+        }
+
+        .header-right .header-text {
+            cursor: pointer;
+        }
+
+        .header-right .header-text:hover {
+            color: #ffc107; /* Yellow color on hover */
+        }
+
+        .container {
+            max-width: 80%;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .add-button {
+            background-color: #303f9f;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-button i {
+            margin-left: 5px;
+        }
+
+        .add-button:hover {
+            background-color: #1a237e;
+        }
+
+        #search-input {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #bdbdbd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        #search-input:focus {
+            border-color: #303f9f;
+            outline: none;
+        }
+
+        .contact-card {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .contact-info {
+            flex: 1;
+        }
+
+        .contact-actions {
+            margin-left: 10px;
+        }
+
+        .edit-button, .delete-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .edit-button {
+            color: #ff9800; /* Orange color */
+            margin-right: 5px;
+        }
+
+        .edit-button:hover {
+            color: #fb8c00; /* Darker orange color on hover */
+        }
+
+        .delete-button {
+            color: #f44336; /* Red color */
+        }
+
+        .delete-button:hover {
+            color: #d32f2f; /* Darker red color on hover */
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            width: 40%;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input {
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #bdbdbd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus {
+            border-color: #303f9f;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            background-color: #303f9f;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #1a237e;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-container">
+            <div class="header-left">
+                <span class="header-icon">📇</span>
+                <span class="header-text">Contact Management</span>
+            </div>
+            <div class="header-right">
+                <span class="header-text" onclick="showAddContactForm()">Add Contact <i class="fas fa-plus"></i></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="controls">
+            <input type="text" id="search-input" placeholder="Search contacts..." oninput="searchContacts()">
+        </div>
+
+        <div id="contact-list" class="contact-list">
+            <!-- Contact cards will be populated here -->
+        </div>
+    </div>
+
+    <div class="modal" id="contact-form-container">
+        <div class="modal-content">
+            <span class="close-button" onclick="hideAddContactForm()">&times;</span>
+            <h2>Add Contact</h2>
+            <form id="contact-form" onsubmit="addContact(event)">
+                <label for="name">Name</label>
+                <input type="text" id="name" required>
+                <label for="organization">Organization</label>
+                <input type="text" id="organization" required>
+                <label for="city">City</label>
+                <input type="text" id="city" required>
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+                <button type="submit" class="add-button">Add Contact</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let contacts = [];
+
+        function showAddContactForm() {
+            document.getElementById('contact-form-container').style.display = 'flex';
+        }
+
+        function hideAddContactForm() {
+            document.getElementById('contact-form-container').style.display = 'none';
+        }
+
+        function addContact(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const organization = document.getElementById('organization').value;
+            const city = document.getElementById('city').value;
+            const phone = document.getElementById('phone').value;
+            const email = document.getElementById('email').value;
+
+            const contact = { name, organization, city, phone, email };
+            contacts.push(contact);
+            updateContactList();
+            hideAddContactForm();
+            document.getElementById('contact-form').reset();
+        }
+
+        function editContact(index) {
+            const contact = contacts[index];
+            document.getElementById('name').value = contact.name;
+            document.getElementById('organization').value = contact.organization;
+            document.getElementById('city').value = contact.city;
+            document.getElementById('phone').value = contact.phone;
+            document.getElementById('email').value = contact.email;
+
+            // Remove the contact from the list temporarily
+            contacts.splice(index, 1);
+
+            showAddContactForm();
+        }
+
+        function deleteContact(index) {
+            if (confirm("Are you sure you want to delete this contact?")) {
+                contacts.splice(index, 1);
+                updateContactList();
+            }
+        }
+
+        function updateContactList() {
+            const contactList = document.getElementById('contact-list');
+            contactList.innerHTML = '';
+
+            contacts.forEach((contact, index) => {
+                const card = document.createElement('div');
+                card.classList.add('contact-card');
+                card.innerHTML = `
+                    <div class="contact-info">
+                        <h3>${contact.name}</h3>
+                        <p><strong>Organization:</strong> ${contact.organization}</p>
+                        <p><strong>City:</strong> ${contact.city}</p>
+                        <p><strong>Phone:</strong> ${contact.phone}</p>
+                        <p><strong>Email:</strong> ${contact.email}</p>
+                    </div>
+                    <div class="contact-actions">
+                        <button class="edit-button" onclick="editContact(${index})">Edit</button>
+                        <button class="delete-button" onclick="deleteContact(${index})">Delete</button>
+                    </div>
+                `;
+                contactList.appendChild(card);
+            });
+        }
+
+        function searchContacts() {
+            const searchText = document.getElementById('search-input').value.toLowerCase();
+
+            const filteredContacts = contacts.filter(contact =>
+                contact.name.toLowerCase().includes(searchText) ||
+                contact.organization.toLowerCase().includes(searchText) ||
+                contact.city.toLowerCase().includes(searchText) ||
+                contact.phone.includes(searchText) ||
+                contact.email.toLowerCase().includes(searchText)
+            );
+
+            updateContactList(filteredContacts);
+        }
+
+        // Example initial data
+        contacts = [
+            { name: "John Doe", organization: "ABC Inc.", city: "New York", phone: "+1234567890", email: "john.doe@example.com" },
+            { name: "Jane Smith", organization: "XYZ Corp.", city: "Los Angeles", phone: "+1987654321", email: "jane.smith@example.com" }
+        ];
+
+        // Populate contact list on initial load
+        updateContactList();
+    </script>
+</body>
+</html>
